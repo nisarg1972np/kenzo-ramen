@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<title>Kenzo Ramen – Authentic Ramen in Barrie, ON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Serif+JP:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ember:#FF4500; --ember2:#FF6B35; --ember3:#FFa066;
+  --gold:#D4A843; --crimson:#8B1A1A;
+  --ink:#080808; --ink2:#0f0f0f; --smoke:#161616;
+  --ash:#242424; --ash2:#2e2e2e; --mist:#777; --fog:#aaa;
+  --paper:#F2EDE4; --white:#fff;
+  --glow:0 0 40px rgba(255,69,0,.45); --glow-sm:0 0 18px rgba(255,69,0,.3);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{background:var(--ink);color:var(--paper);font-family:'DM Sans',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-overflow-scrolling:touch;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+*{-webkit-tap-highlight-color:transparent;}
+
+/* CURSOR */
+@media(pointer:fine){
+  body{cursor:none;}
+  .cur{position:fixed;pointer-events:none;z-index:9999;border-radius:50%;}
+  #cur-dot{width:8px;height:8px;background:var(--ember);top:0;left:0;transform:translate(-50%,-50%);box-shadow:var(--glow-sm);transition:width .15s,height .15s;}
+  #cur-ring{width:36px;height:36px;border:1.5px solid rgba(255,69,0,.45);top:0;left:0;transform:translate(-50%,-50%);transition:width .3s,height .3s,border-color .3s;}
+}
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:var(--ink);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity .6s,visibility .6s;}
+#loader.hidden{opacity:0;visibility:hidden;}
+.loader-kanji{font-family:'Noto Serif JP',serif;font-size:clamp(3rem,10vw,6rem);color:var(--ember);animation:kPulse 1.2s ease-in-out infinite;}
+@keyframes kPulse{0%,100%{opacity:.3;transform:scale(.95);}50%{opacity:1;transform:scale(1.05);text-shadow:0 0 40px var(--ember);}}
+.loader-bar-wrap{width:180px;height:2px;background:var(--ash);overflow:hidden;}
+.loader-bar{height:100%;background:linear-gradient(90deg,var(--ember),var(--ember2));width:0;animation:lBar 2s ease forwards;}
+@keyframes lBar{to{width:100%;}}
+.loader-text{font-size:.65rem;letter-spacing:.4em;text-transform:uppercase;color:var(--mist);}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:64px;background:rgba(8,8,8,.88);backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,69,0,.12);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1rem,4vw,2.5rem);transition:box-shadow .3s,border-color .3s;}
+nav.scrolled{box-shadow:0 4px 30px rgba(255,69,0,.08);border-color:rgba(255,69,0,.2);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.65rem;letter-spacing:.12em;display:flex;align-items:center;gap:.5rem;}
+.nav-logo .kanji{color:var(--ember);}
+.nav-links{display:flex;align-items:center;gap:2rem;}
+.nav-links a{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--fog);transition:color .2s;position:relative;padding-bottom:2px;}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;right:100%;height:1px;background:var(--ember);transition:right .25s ease;}
+.nav-links a:hover{color:var(--paper);}
+.nav-links a:hover::after{right:0;}
+.nav-order{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;background:var(--ember);color:#fff;padding:.5rem 1.3rem;font-weight:500;transition:all .25s;box-shadow:0 0 22px rgba(255,69,0,.35);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+.nav-order:hover{background:var(--ember2);box-shadow:var(--glow);transform:translateY(-1px);}
+.hamburger{display:none;flex-direction:column;gap:5px;width:26px;padding:4px;}
+.hamburger span{display:block;height:2px;background:var(--paper);transition:all .3s;border-radius:2px;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.mobile-menu{position:fixed;inset:64px 0 0;z-index:450;background:rgba(8,8,8,.97);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;opacity:0;visibility:hidden;transform:translateY(-10px);transition:all .35s cubic-bezier(.4,0,.2,1);}
+.mobile-menu.open{opacity:1;visibility:visible;transform:translateY(0);}
+.mobile-menu a{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;letter-spacing:.15em;color:var(--fog);transition:color .2s;}
+.mobile-menu a:hover,.mobile-menu a:active{color:var(--ember);}
+.mob-order{background:var(--ember)!important;color:#fff!important;font-size:1.1rem!important;letter-spacing:.2em!important;padding:1rem 3rem!important;box-shadow:var(--glow);}
+
+/* HERO */
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden;padding-top:64px;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 60%,#1a0800 0%,#0a0400 40%,#080808 100%);z-index:1;}
+.bg-kanji{position:absolute;font-family:'Noto Serif JP',serif;color:rgba(255,69,0,.04);font-size:28vw;line-height:1;user-select:none;pointer-events:none;z-index:1;}
+.bk1{top:-10%;left:-8%;animation:floatBk 18s ease-in-out infinite;}
+.bk2{bottom:-15%;right:-8%;animation:floatBk 22s ease-in-out infinite reverse;font-size:20vw;color:rgba(255,69,0,.03);}
+@keyframes floatBk{0%,100%{transform:translate(0,0) rotate(-5deg);}50%{transform:translate(20px,15px) rotate(5deg);}}
+.noodle-lines{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.noodle-lines svg{width:100%;height:100%;opacity:.06;}
+.hero-orb{position:absolute;width:70vmax;height:70vmax;background:radial-gradient(circle,rgba(255,69,0,.14) 0%,rgba(180,30,0,.06) 40%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:orbP 5s ease-in-out infinite;z-index:2;}
+@keyframes orbP{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.7;}50%{transform:translate(-50%,-50%) scale(1.12);opacity:1;}}
+#steam-canvas{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.55;}
+.particles{position:absolute;inset:0;z-index:3;pointer-events:none;}
+.particle{position:absolute;border-radius:50%;background:var(--ember);opacity:0;animation:pFloat linear infinite;}
+@keyframes pFloat{0%{transform:translateY(100vh) scale(0);opacity:0;}10%{opacity:.5;}90%{opacity:.25;}100%{transform:translateY(-20px) scale(1.5);opacity:0;}}
+.hero-content{position:relative;z-index:10;text-align:center;padding:2rem clamp(1rem,5vw,3rem);max-width:960px;width:100%;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:.75rem;font-size:.68rem;letter-spacing:.45em;text-transform:uppercase;color:var(--ember);margin-bottom:1.5rem;opacity:0;animation:fadeUp .8s .4s ease forwards;}
+.eyebrow-line{width:40px;height:1px;background:var(--ember);opacity:.6;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.2rem,11vw,9.5rem);line-height:.92;letter-spacing:.02em;margin-bottom:1.5rem;opacity:0;animation:fadeUp .9s .6s ease forwards;}
+.hero-title .accent{color:var(--ember);display:block;}
+.hero-title .kanji-inline{font-family:'Noto Serif JP',serif;font-size:clamp(1rem,3.5vw,2.8rem);color:rgba(255,69,0,.5);letter-spacing:.3em;display:block;margin-top:.3rem;}
+.hero-sub{font-size:clamp(.88rem,2.2vw,1.1rem);color:var(--fog);max-width:520px;margin:0 auto 2.5rem;line-height:1.8;font-weight:300;opacity:0;animation:fadeUp .8s .8s ease forwards;}
+.hero-btns{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;opacity:0;animation:fadeUp .8s 1s ease forwards;}
+.btn-primary{display:inline-flex;align-items:center;gap:.6rem;background:var(--ember);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.2em;padding:.85rem 2.4rem;box-shadow:var(--glow);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:all .3s;position:relative;overflow:hidden;}
+.btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transform:translateX(-100%);transition:transform .5s;}
+.btn-primary:hover{background:var(--ember2);box-shadow:0 0 60px rgba(255,69,0,.7);transform:translateY(-3px);}
+.btn-primary:hover::after{transform:translateX(100%);}
+.btn-primary:active{transform:translateY(0);}
+.btn-secondary{display:inline-flex;align-items:center;gap:.6rem;border:1px solid rgba(255,69,0,.4);color:var(--paper);font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.2em;padding:.85rem 2.4rem;transition:all .3s;}
+.btn-secondary:hover{border-color:var(--ember);background:rgba(255,69,0,.08);transform:translateY(-2px);}
+.hero-stats{display:flex;gap:clamp(1.5rem,5vw,4rem);justify-content:center;margin-top:3rem;opacity:0;animation:fadeUp .8s 1.2s ease forwards;}
+.stat{text-align:center;}
+.stat-n{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.6rem,3.5vw,2.4rem);color:var(--ember);line-height:1;}
+.stat-l{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mist);margin-top:.2rem;}
+.scroll-indicator{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--mist);animation:fadeUp .8s 1.6s both;}
+.s-line{width:1px;height:44px;background:linear-gradient(to bottom,var(--ember),transparent);animation:sDrop 1.8s ease-in-out infinite;}
+@keyframes sDrop{0%{transform:scaleY(0);transform-origin:top;opacity:0;}40%{transform:scaleY(1);transform-origin:top;opacity:1;}80%{transform:scaleY(1);transform-origin:bottom;opacity:0;}100%{transform:scaleY(0);transform-origin:bottom;opacity:0;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+
+/* MARQUEE */
+.marquee-strip{overflow:hidden;white-space:nowrap;background:var(--ember);padding:.6rem 0;border-top:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1);}
+.marquee-inner{display:inline-block;animation:mScroll 22s linear infinite;}
+.marquee-inner span{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.25em;color:rgba(255,255,255,.9);padding:0 2rem;}
+.marquee-inner span.sep{color:rgba(255,255,255,.35);}
+@keyframes mScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* SECTION COMMONS */
+section{padding:clamp(4rem,10vw,8rem) clamp(1.2rem,5vw,2.5rem);}
+.container{max-width:1200px;margin:0 auto;}
+.section-label{display:inline-flex;align-items:center;gap:.7rem;font-size:.62rem;letter-spacing:.42em;text-transform:uppercase;color:var(--ember);margin-bottom:.9rem;}
+.section-label::after{content:'';width:28px;height:1px;background:var(--ember);opacity:.55;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,5.5vw,4.5rem);letter-spacing:.04em;line-height:.95;}
+.section-title .em{color:var(--ember);}
+.divider-ornament{display:flex;align-items:center;gap:1.2rem;max-width:260px;margin:0 auto;}
+.div-line{flex:1;height:1px;background:var(--ash2);}
+.div-glyph{font-family:'Noto Serif JP',serif;font-size:1.1rem;color:var(--ember);}
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .75s ease,transform .75s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:.12s;}.reveal-delay-2{transition-delay:.24s;}.reveal-delay-3{transition-delay:.36s;}
+.reveal-scale{opacity:0;transform:scale(.92);transition:opacity .7s ease,transform .7s ease;}
+.reveal-scale.visible{opacity:1;transform:scale(1);}
+
+/* ABOUT STRIP */
+.about-strip{background:var(--smoke);border-top:1px solid var(--ash);border-bottom:1px solid var(--ash);}
+.about-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;}
+.about-cell{padding:2.5rem 2rem;border-right:1px solid var(--ash);transition:background .3s;}
+.about-cell:last-child{border-right:none;}
+.about-cell:hover{background:rgba(255,69,0,.04);}
+.cell-icon{font-size:2rem;margin-bottom:1rem;}
+.cell-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;margin-bottom:.4rem;}
+.cell-desc{font-size:.82rem;color:var(--mist);line-height:1.7;}
+
+/* REVIEWS */
+.reviews-section{background:var(--ink2);}
+.review-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1.5rem;margin-top:3rem;}
+.review-card{background:var(--smoke);border:1px solid var(--ash);border-top:2px solid var(--ember);padding:2rem;position:relative;overflow:hidden;transition:transform .35s cubic-bezier(.4,0,.2,1),box-shadow .35s,border-color .35s;}
+.review-card::before{content:'❝';font-size:5rem;color:var(--ember);opacity:.08;position:absolute;top:-.8rem;right:1rem;line-height:1;font-family:Georgia,serif;pointer-events:none;}
+.review-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 0 1px rgba(255,69,0,.3);border-color:rgba(255,69,0,.4);}
+.stars{color:#FFB800;font-size:.9rem;letter-spacing:.1em;margin-bottom:.75rem;}
+.google-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mist);margin-bottom:.75rem;border:1px solid var(--ash2);padding:.2rem .6rem;border-radius:2px;}
+.review-text{font-size:.88rem;line-height:1.85;color:#BDB5AA;margin-bottom:1.4rem;font-style:italic;}
+.reviewer-name{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);font-weight:500;}
+.reviewer-loc{font-size:.68rem;color:var(--mist);margin-top:.2rem;}
+
+/* MENU */
+.menu-section{background:var(--ink);}
+.menu-filter{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:2rem;margin-bottom:2.5rem;}
+.filter-btn{font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;border:1px solid var(--ash2);color:var(--mist);padding:.45rem 1.1rem;transition:all .25s;border-radius:2px;}
+.filter-btn:hover,.filter-btn.active{background:var(--ember);border-color:var(--ember);color:#fff;}
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;}
+.menu-card{background:var(--smoke);border:1px solid var(--ash);overflow:hidden;transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;cursor:pointer;}
+.menu-card:hover{transform:translateY(-8px);box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 0 1px rgba(255,69,0,.3);}
+.menu-img{height:210px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;}
+.menu-img-bg{position:absolute;inset:0;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+.menu-card:hover .menu-img-bg{transform:scale(1.08);}
+.menu-emoji{font-size:4.5rem;position:relative;z-index:2;transition:transform .4s;}
+.menu-card:hover .menu-emoji{transform:scale(1.1) rotate(-5deg);}
+.menu-badge{position:absolute;top:1rem;left:1rem;z-index:3;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;padding:.25rem .65rem;font-weight:500;}
+.badge-hot{background:var(--ember);color:#fff;}
+.badge-new{background:var(--gold);color:var(--ink);}
+.badge-sig{background:rgba(255,255,255,.12);color:var(--paper);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15);}
+.heat-meter{position:absolute;bottom:.8rem;right:.8rem;z-index:3;display:flex;gap:2px;}
+.heat-pip{width:8px;height:8px;border-radius:50%;background:var(--ash2);}
+.heat-pip.on{background:var(--ember);box-shadow:0 0 6px var(--ember);}
+.menu-body{padding:1.4rem;}
+.menu-name{font-family:'Bebas Neue',sans-serif;font-size:1.55rem;letter-spacing:.06em;margin-bottom:.3rem;}
+.menu-jp{font-family:'Noto Serif JP',serif;font-size:.7rem;color:var(--ember);opacity:.6;letter-spacing:.15em;margin-bottom:.5rem;}
+.menu-desc{font-size:.8rem;color:var(--mist);line-height:1.65;margin-bottom:1.2rem;}
+.menu-footer{display:flex;align-items:center;justify-content:space-between;gap:.75rem;}
+.menu-price{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--ember);letter-spacing:.04em;line-height:1;}
+.menu-size{font-size:.62rem;color:var(--mist);letter-spacing:.1em;}
+.btn-add{display:inline-flex;align-items:center;gap:.4rem;border:1px solid var(--ember);color:var(--ember);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;padding:.5rem 1.05rem;transition:all .25s;white-space:nowrap;}
+.btn-add:hover{background:var(--ember);color:#fff;box-shadow:0 0 22px rgba(255,69,0,.4);}
+.menu-more{text-align:center;margin-top:3rem;}
+
+/* LOCATION */
+.location-section{background:var(--ink2);}
+.location-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:3rem;align-items:start;margin-top:3rem;}
+.map-wrap{position:relative;border-radius:2px;overflow:hidden;border:1px solid var(--ash);}
+.map-frame{width:100%;height:380px;background:var(--smoke);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.map-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,69,0,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,69,0,.06) 1px,transparent 1px);background-size:36px 36px;animation:mapP 15s linear infinite;}
+@keyframes mapP{0%{background-position:0 0;}100%{background-position:36px 36px;}}
+.map-dot-grid{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,69,0,.12) 1px,transparent 1px);background-size:36px 36px;}
+.pulse-rings{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:4;}
+.pulse-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,69,0,.3);animation:pRing 3s ease-out infinite;}
+.pulse-ring:nth-child(2){animation-delay:.8s;}.pulse-ring:nth-child(3){animation-delay:1.6s;}
+@keyframes pRing{0%{width:20px;height:20px;opacity:.8;}100%{width:180px;height:180px;opacity:0;}}
+.map-pin-wrap{position:relative;z-index:5;text-align:center;}
+.map-pin-icon{font-size:3rem;display:block;animation:pinB 2.2s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(255,69,0,.6));}
+@keyframes pinB{0%,100%{transform:translateY(0);}45%{transform:translateY(-12px);}}
+.map-pin-ring-shadow{width:70px;height:12px;background:radial-gradient(ellipse,rgba(0,0,0,.5),transparent);margin:0 auto;border-radius:50%;animation:pinS 2.2s ease-in-out infinite;}
+@keyframes pinS{0%,100%{transform:scaleX(1);opacity:.5;}45%{transform:scaleX(.5);opacity:.2;}}
+.map-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.2em;color:var(--ember);margin-top:.5rem;}
+.map-sub{font-size:.7rem;color:var(--mist);letter-spacing:.1em;margin-top:.2rem;}
+.map-overlay-link{position:absolute;inset:0;z-index:6;display:flex;align-items:flex-end;justify-content:center;padding:1.2rem;background:linear-gradient(to top,rgba(8,8,8,.85) 0%,transparent 50%);opacity:0;transition:opacity .3s;}
+.map-wrap:hover .map-overlay-link{opacity:1;}
+.map-overlay-link a{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;background:var(--ember);color:#fff;padding:.5rem 1.5rem;box-shadow:var(--glow);}
+.info-panel{display:flex;flex-direction:column;}
+.info-row{display:flex;gap:1rem;padding:1.2rem 0;border-bottom:1px solid var(--ash);align-items:flex-start;}
+.info-row:first-child{padding-top:0;}.info-row:last-child{border-bottom:none;}
+.info-icon-wrap{width:36px;height:36px;background:rgba(255,69,0,.1);border:1px solid rgba(255,69,0,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem;transition:all .25s;}
+.info-row:hover .info-icon-wrap{background:rgba(255,69,0,.2);border-color:rgba(255,69,0,.5);}
+.info-label{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mist);margin-bottom:.3rem;}
+.info-val{font-size:.92rem;line-height:1.6;}
+.info-val a{color:var(--ember);transition:opacity .2s;}.info-val a:hover{opacity:.75;}
+.hours-grid{display:grid;gap:.35rem;margin-top:.4rem;}
+.hours-row{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;}
+.hours-day{color:var(--fog);}.hours-time{color:var(--paper);}.hours-closed{color:var(--ember);font-size:.72rem;letter-spacing:.1em;}
+.today-badge{font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,69,0,.15);border:1px solid rgba(255,69,0,.3);color:var(--ember);padding:.1rem .4rem;margin-left:.5rem;border-radius:2px;}
+.btn-directions{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;background:transparent;border:1px solid var(--ember);color:var(--ember);font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.2em;padding:1rem;margin-top:1.5rem;transition:all .28s;}
+.btn-directions:hover{background:var(--ember);color:#fff;box-shadow:var(--glow);}
+
+/* MODAL */
+.modal-backdrop{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;}
+.modal-backdrop.open{opacity:1;visibility:visible;}
+.modal{background:var(--smoke);border:1px solid var(--ash2);border-top:2px solid var(--ember);max-width:520px;width:100%;position:relative;transform:translateY(30px) scale(.96);transition:transform .4s cubic-bezier(.34,1.56,.64,1);max-height:90vh;overflow-y:auto;}
+.modal-backdrop.open .modal{transform:translateY(0) scale(1);}
+.modal-close{position:absolute;top:1rem;right:1rem;width:34px;height:34px;border:1px solid var(--ash2);color:var(--mist);display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;transition:all .2s;background:rgba(8,8,8,.6);}
+.modal-close:hover{border-color:var(--ember);color:var(--ember);}
+.modal-img{height:220px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.modal-body{padding:1.8rem;}
+.modal-tag{font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--ember);margin-bottom:.5rem;}
+.modal-name{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.06em;margin-bottom:.4rem;}
+.modal-jp{font-family:'Noto Serif JP',serif;font-size:.8rem;color:rgba(255,69,0,.55);letter-spacing:.2em;margin-bottom:1rem;}
+.modal-desc{font-size:.88rem;color:var(--fog);line-height:1.8;margin-bottom:1.4rem;}
+.modal-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;}
+.modal-chip{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--ash2);color:var(--mist);padding:.25rem .7rem;border-radius:99px;}
+.modal-footer{display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.modal-price{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--ember);}
+.btn-order-modal{flex:1;background:var(--ember);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.18em;padding:.8rem 1.5rem;text-align:center;transition:all .25s;box-shadow:var(--glow-sm);display:block;}
+.btn-order-modal:hover{background:var(--ember2);box-shadow:var(--glow);}
+
+/* WELCOME POPUP */
+.welcome-popup{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(140px);z-index:1500;max-width:420px;width:calc(100% - 2rem);background:var(--smoke);border:1px solid var(--ash2);border-left:3px solid var(--ember);display:flex;align-items:center;gap:1rem;padding:1rem 1.2rem;box-shadow:0 20px 60px rgba(0,0,0,.6);transition:transform .5s cubic-bezier(.34,1.3,.64,1),opacity .5s;opacity:0;}
+.welcome-popup.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.welcome-popup.hide{transform:translateX(-50%) translateY(140px);opacity:0;}
+.popup-icon{font-size:2rem;flex-shrink:0;}
+.popup-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.08em;color:var(--paper);}
+.popup-sub{font-size:.72rem;color:var(--mist);margin-top:.15rem;}
+.popup-close{margin-left:auto;color:var(--mist);font-size:1.1rem;cursor:pointer;flex-shrink:0;transition:color .2s;}
+.popup-close:hover{color:var(--paper);}
+
+/* FOOTER */
+footer{background:#050505;border-top:1px solid var(--ash);padding:clamp(2.5rem,6vw,4rem) clamp(1.2rem,5vw,2.5rem);}
+.footer-inner{max-width:1200px;margin:0 auto;}
+.footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:3rem;padding-bottom:2.5rem;border-bottom:1px solid var(--ash);}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.12em;margin-bottom:.75rem;}
+.footer-logo .em{color:var(--ember);}
+.footer-tagline{font-size:.82rem;color:var(--mist);line-height:1.7;max-width:240px;}
+.footer-col-title{font-size:.62rem;letter-spacing:.35em;text-transform:uppercase;color:var(--ember);margin-bottom:1.1rem;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:.6rem;}
+.footer-col ul li a{font-size:.84rem;color:var(--mist);transition:color .2s;}
+.footer-col ul li a:hover{color:var(--paper);}
+.footer-bottom{padding-top:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-copy{font-size:.7rem;color:#3a3a3a;letter-spacing:.1em;}
+.footer-socials{display:flex;gap:1rem;}
+.social-btn{width:34px;height:34px;border:1px solid var(--ash2);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--mist);transition:all .25s;}
+.social-btn:hover{border-color:var(--ember);color:var(--ember);background:rgba(255,69,0,.08);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .location-grid{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .footer-top>div:first-child{grid-column:1/-1;}
+}
+@media(max-width:680px){
+  .nav-links{display:none;}.nav-order{display:none;}
+  .hamburger{display:flex;}
+  .hero-title{font-size:clamp(2.8rem,13vw,5rem);}
+  .hero-btns{flex-direction:column;align-items:center;}
+  .btn-primary,.btn-secondary{width:100%;max-width:320px;justify-content:center;}
+  .hero-stats{gap:1.5rem;}
+  .about-grid{grid-template-columns:1fr 1fr;}
+  .about-cell{border-right:none!important;border-bottom:1px solid var(--ash);}
+  .about-cell:nth-child(odd){border-right:1px solid var(--ash)!important;}
+  .about-cell:nth-last-child(-n+2){border-bottom:none;}
+  .review-grid{grid-template-columns:1fr;}
+  .menu-grid{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr;}
+  .footer-bottom{flex-direction:column;align-items:flex-start;}
+  .map-frame{height:260px;}
+  .welcome-popup{bottom:.75rem;}
+  section{padding:clamp(3rem,8vw,5rem) clamp(1rem,4vw,2rem);}
+}
+@media(max-width:400px){
+  .about-grid{grid-template-columns:1fr;}
+  .about-cell{border-right:none!important;}
+  .hero-stats{gap:1rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-kanji">拉麺</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-text">Kenzo Ramen · Barrie, Ontario</div>
+</div>
+
+<!-- CURSOR -->
+<div class="cur" id="cur-dot"></div>
+<div class="cur" id="cur-ring"></div>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="#home" class="nav-logo" aria-label="Kenzo Ramen home">KENZO <span class="kanji">拉麺</span></a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#menu">Menu</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#location">Location</a>
+  </div>
+  <a href="tel:7057288050" class="nav-order">🔥 Order Now</a>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <a href="#about" class="mob-link">About</a>
+  <a href="#menu" class="mob-link">Menu</a>
+  <a href="#reviews" class="mob-link">Reviews</a>
+  <a href="#location" class="mob-link">Location</a>
+  <a href="tel:7057288050" class="mob-order">📞 Call to Order</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home" aria-label="Hero">
+  <div class="hero-bg">
+    <div class="bg-kanji bk1">麺</div>
+    <div class="bg-kanji bk2">湯</div>
+    <div class="noodle-lines">
+      <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 200 Q360 150 720 250 T1440 200" stroke="#FF4500" stroke-width="1.5"/>
+        <path d="M0 300 Q360 250 720 350 T1440 300" stroke="#FF4500" stroke-width="1" opacity=".6"/>
+        <path d="M0 400 Q360 350 720 450 T1440 400" stroke="#FF4500" stroke-width="1" opacity=".4"/>
+        <path d="M0 500 Q360 450 720 550 T1440 500" stroke="#FF4500" stroke-width="1" opacity=".25"/>
+        <path d="M0 600 Q360 550 720 650 T1440 600" stroke="#FF4500" stroke-width="1" opacity=".15"/>
+        <circle cx="200" cy="180" r="3" fill="#FF4500" opacity=".5"/>
+        <circle cx="600" cy="280" r="2" fill="#FF4500" opacity=".35"/>
+        <circle cx="1100" cy="350" r="3" fill="#FF4500" opacity=".4"/>
+        <circle cx="400" cy="500" r="1.5" fill="#FF4500" opacity=".3"/>
+        <circle cx="900" cy="420" r="2.5" fill="#FF4500" opacity=".35"/>
+      </svg>
+    </div>
+  </div>
+  <div class="hero-orb"></div>
+  <canvas id="steam-canvas"></canvas>
+  <div class="particles" id="particles"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-line"></span>
+      Since 2021 &nbsp;·&nbsp; Barrie, Ontario
+      <span class="eyebrow-line"></span>
+    </div>
+    <h1 class="hero-title">
+      Authentic
+      <span class="accent">Ramen</span>
+      in the Heart of Barrie
+      <span class="kanji-inline">本物の一杯</span>
+    </h1>
+    <p class="hero-sub">House-made noodles, slow-simmered broths, and a bowl that warms you from the inside out — whatever the season.</p>
+    <div class="hero-btns">
+      <a href="tel:7057288050" class="btn-primary">🔥 Order Now</a>
+      <a href="#menu" class="btn-secondary">View Menu →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-n">4.3★</div><div class="stat-l">Yelp Rating</div></div>
+      <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Health Score</div></div>
+      <div class="stat"><div class="stat-n">5+</div><div class="stat-l">Years Serving</div></div>
+      <div class="stat"><div class="stat-n">16+</div><div class="stat-l">Reviews</div></div>
+    </div>
+  </div>
+  <div class="scroll-indicator" aria-hidden="true"><div class="s-line"></div><span>Scroll</span></div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip" aria-hidden="true">
+  <div class="marquee-inner">
+    <span>Tonkotsu</span><span class="sep">·</span><span>Spicy Miso</span><span class="sep">·</span><span>King of Kings</span><span class="sep">·</span><span>Yakisoba</span><span class="sep">·</span><span>Agedashi Tofu</span><span class="sep">·</span><span>House-Made Noodles</span><span class="sep">·</span><span>Barrie's Best Ramen</span><span class="sep">·</span><span>555 Essa Road</span><span class="sep">·</span>
+    <span>Tonkotsu</span><span class="sep">·</span><span>Spicy Miso</span><span class="sep">·</span><span>King of Kings</span><span class="sep">·</span><span>Yakisoba</span><span class="sep">·</span><span>Agedashi Tofu</span><span class="sep">·</span><span>House-Made Noodles</span><span class="sep">·</span><span>Barrie's Best Ramen</span><span class="sep">·</span><span>555 Essa Road</span><span class="sep">·</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="about-strip" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-cell reveal"><div class="cell-icon">🍜</div><div class="cell-title">House-Made Noodles</div><div class="cell-desc">Every strand crafted in-house daily. Never frozen, never compromised.</div></div>
+      <div class="about-cell reveal reveal-delay-1"><div class="cell-icon">🔥</div><div class="cell-title">18-Hour Broth</div><div class="cell-desc">Slow-simmered pork bones, layered with depth you taste in every sip.</div></div>
+      <div class="about-cell reveal reveal-delay-2"><div class="cell-icon">📍</div><div class="cell-title">Local &amp; Proud</div><div class="cell-desc">Barrie's most loved ramen spot since 2021. Stranger in, regular out.</div></div>
+      <div class="about-cell reveal reveal-delay-3"><div class="cell-icon">💯</div><div class="cell-title">Perfect Health Score</div><div class="cell-desc">100/100 health inspection rating. Clean kitchen, great ramen, always.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEWS -->
+<section class="reviews-section" id="reviews">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">What Barrie Is Saying</div>
+      <h2 class="section-title">Real Bowls,<br><span class="em">Real Love</span></h2>
+    </div>
+    <div class="review-grid">
+      <div class="review-card reveal reveal-delay-1">
+        <div class="google-badge">★ Yelp Review</div>
+        <div class="stars">★★★★★</div>
+        <p class="review-text">"Flavor was on point, the broth was fantastic, and every bite had a perfectly spiced kick. Quite arguably one of the best meals I've had in Canada — and I don't say that lightly."</p>
+        <div class="reviewer-name">Alyssa N.</div>
+        <div class="reviewer-loc">San Diego, CA</div>
+      </div>
+      <div class="review-card reveal reveal-delay-2">
+        <div class="google-badge">★ Yelp Review</div>
+        <div class="stars">★★★★★</div>
+        <p class="review-text">"Very welcoming atmosphere, excellent service, and the spice feels genuinely authentic. The best ramen I've had in Barrie — full stop. Coming back every single visit."</p>
+        <div class="reviewer-name">Joseph N.</div>
+        <div class="reviewer-loc">Brampton, ON</div>
+      </div>
+      <div class="review-card reveal reveal-delay-3">
+        <div class="google-badge">★ Yelp Review</div>
+        <div class="stars">★★★★★</div>
+        <p class="review-text">"Terrific value, great portions, and the service was incredibly attentive. A perfect dinner stop after skiing. Reserve on weekends — trust me, it fills up fast."</p>
+        <div class="reviewer-name">Gordon C.</div>
+        <div class="reviewer-loc">Toronto, ON</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider-ornament" style="padding:3.5rem 0;"><div class="div-line"></div><div class="div-glyph">麺</div><div class="div-line"></div></div>
+
+<!-- MENU -->
+<section class="menu-section" id="menu">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Signature Bowls</div>
+      <h2 class="section-title">Built for<br><span class="em">Obsession</span></h2>
+      <p style="color:var(--mist);font-size:.88rem;line-height:1.7;max-width:460px;margin-top:.8rem;">Tap any bowl to see what makes it special.</p>
+    </div>
+    <div class="menu-filter">
+      <button class="filter-btn active" data-filter="all">All Bowls</button>
+      <button class="filter-btn" data-filter="classic">Classic</button>
+      <button class="filter-btn" data-filter="spicy">Spicy</button>
+      <button class="filter-btn" data-filter="signature">Signature</button>
+    </div>
+    <div class="menu-grid">
+      <div class="menu-card reveal reveal-scale" data-category="classic" data-name="King Tonkotsu" data-jp="キング豚骨" data-emoji="🍜" data-price="$17" data-tag="Classic · Fan Favourite" data-desc="Our most-loved bowl. Hakata-style pork bone broth slow-simmered 18 hours until silky and impossibly rich. Topped with roasted pork shoulder, a soy-marinated soft-boiled egg, bamboo shoots, beansprouts, naruto maki, and fresh scallion." data-chips="Pork Broth,Chashu,Soft Egg,Bamboo,Beansprout" data-bg="linear-gradient(135deg,#1a0900,#2d1500,#0f0800)">
+        <div class="menu-img"><div class="menu-img-bg" style="background:linear-gradient(135deg,#1a0900,#2d1500,#0f0800);"></div><div class="menu-emoji">🍜</div><div class="menu-badge badge-hot">Fan Fave</div><div class="heat-meter"><div class="heat-pip on"></div><div class="heat-pip on"></div><div class="heat-pip"></div><div class="heat-pip"></div></div></div>
+        <div class="menu-body"><div class="menu-name">King Tonkotsu</div><div class="menu-jp">キング豚骨</div><p class="menu-desc">18-hour pork bone broth, roasted chashu, soy egg, bamboo shoots, beansprouts, scallion.</p><div class="menu-footer"><div><div class="menu-price">$17</div><div class="menu-size">Regular / King +$4</div></div><button class="btn-add open-modal">+ Details</button></div></div>
+      </div>
+      <div class="menu-card reveal reveal-scale reveal-delay-1" data-category="spicy" data-name="Spicy Miso" data-jp="辛味噌ラーメン" data-emoji="🌶️" data-price="$16" data-tag="Spicy · House Recipe" data-desc="A deep, nutty miso base blended with our house chili paste — rich, earthy, and warming. Loaded with chashu pork, sweet corn, bok choy, beansprouts, and a perfectly soft-boiled soy-marinated egg. Spice level 2 by default; ask for 1–5." data-chips="Miso Broth,Chili Paste,Chashu,Corn,Bok Choy,Soft Egg" data-bg="linear-gradient(135deg,#200600,#3d0e00,#150400)">
+        <div class="menu-img"><div class="menu-img-bg" style="background:linear-gradient(135deg,#200600,#3d0e00,#150400);"></div><div class="menu-emoji">🌶️</div><div class="menu-badge badge-hot">Spicy</div><div class="heat-meter"><div class="heat-pip on"></div><div class="heat-pip on"></div><div class="heat-pip on"></div><div class="heat-pip"></div></div></div>
+        <div class="menu-body"><div class="menu-name">Spicy Miso</div><div class="menu-jp">辛味噌ラーメン</div><p class="menu-desc">House chili miso broth, chashu pork, corn, bok choy, soft egg. Levels 1–5.</p><div class="menu-footer"><div><div class="menu-price">$16</div><div class="menu-size">Regular / King +$4</div></div><button class="btn-add open-modal">+ Details</button></div></div>
+      </div>
+      <div class="menu-card reveal reveal-scale reveal-delay-2" data-category="signature" data-name="King of Kings" data-jp="王様の一杯" data-emoji="👑" data-price="$19" data-tag="Signature · The Legend" data-desc="The bowl that put us on the map. Spicy Netsu broth — a secret recipe blending rich tonkotsu with Kenzo's signature spice blend. Topped with roasted pork, sliced soy egg, fish cake, both fresh and dried seaweed, menma, and scallion. Our proudest creation." data-chips="Spicy Netsu,Chashu,Fish Cake,Seaweed,Marinated Egg,Menma" data-bg="linear-gradient(135deg,#0d0a00,#231c00,#080808)">
+        <div class="menu-img"><div class="menu-img-bg" style="background:linear-gradient(135deg,#0d0a00,#231c00,#080808);"></div><div class="menu-emoji">👑</div><div class="menu-badge badge-sig">Signature</div><div class="heat-meter"><div class="heat-pip on"></div><div class="heat-pip on"></div><div class="heat-pip on"></div><div class="heat-pip on"></div></div></div>
+        <div class="menu-body"><div class="menu-name">King of Kings</div><div class="menu-jp">王様の一杯</div><p class="menu-desc">Spicy Netsu broth, roasted pork, egg, fish cake, fresh &amp; dried seaweed, menma.</p><div class="menu-footer"><div><div class="menu-price">$19</div><div class="menu-size">Regular / King +$5</div></div><button class="btn-add open-modal">+ Details</button></div></div>
+      </div>
+      <div class="menu-card reveal reveal-scale" data-category="classic" data-name="Black Tonkotsu" data-jp="黒豚骨" data-emoji="⚫" data-price="$17" data-tag="Classic · Bold" data-desc="Hakata-style pork bone broth finished with blackened garlic oil (mayu) for a smoky, roasted depth. Topped with roasted pork shoulder, soy egg, beansprouts, menma, naruto maki, bamboo shoots, and scallions. Dark, dramatic, unforgettable." data-chips="Black Garlic Oil,Pork Broth,Chashu,Marinated Egg,Menma" data-bg="linear-gradient(135deg,#050505,#111,#080808)">
+        <div class="menu-img"><div class="menu-img-bg" style="background:linear-gradient(135deg,#050505,#111,#080808);"></div><div class="menu-emoji">⚫</div><div class="menu-badge badge-sig">Bold</div><div class="heat-meter"><div class="heat-pip on"></div><div class="heat-pip on"></div><div class="heat-pip"></div><div class="heat-pip"></div></div></div>
+        <div class="menu-body"><div class="menu-name">Black Tonkotsu</div><div class="menu-jp">黒豚骨</div><p class="menu-desc">Blackened garlic oil over rich pork bone broth. Smoky, deep, complex.</p><div class="menu-footer"><div><div class="menu-price">$17</div><div class="menu-size">Regular / King +$4</div></div><button class="btn-add open-modal">+ Details</button></div></div>
+      </div>
+      <div class="menu-card reveal reveal-scale reveal-delay-1" data-category="signature" data-name="Nagasaki Champon" data-jp="長崎ちゃんぽん" data-emoji="🦐" data-price="$20" data-tag="Signature · Seafood" data-desc="A celebration of the sea. Fresh mussels, scallops, squid, and shrimp in a luxurious tonkotsu-seafood broth with house-made noodles. Loaded with vegetables and umami in every spoonful. The dish regulars return for." data-chips="Seafood Broth,Mussels,Scallops,Squid,Shrimp,Vegetables" data-bg="linear-gradient(135deg,#001a1a,#003333,#000f0f)">
+        <div class="menu-img"><div class="menu-img-bg" style="background:linear-gradient(135deg,#001a1a,#003333,#000f0f);"></div><div class="menu-emoji">🦐</div><div class="menu-badge badge-new">Fan Pick</div><div class="heat-meter"><div class="heat-pip on"></div><div class="heat-pip"></div><div class="heat-pip"></div><div class="heat-pip"></div></div></div>
+        <div class="menu-body"><div class="menu-name">Nagasaki Champon</div><div class="menu-jp">長崎ちゃんぽん</div><p class="menu-desc">Mussels, scallops, squid &amp; shrimp in a hearty tonkotsu-seafood broth.</p><div class="menu-footer"><div><div class="menu-price">$20</div><div class="menu-size">Regular only</div></div><button class="btn-add open-modal">+ Details</button></div></div>
+      </div>
+      <div class="menu-card reveal reveal-scale reveal-delay-2" data-category="classic" data-name="Yakisoba" data-jp="焼きそば" data-emoji="🥢" data-price="$14" data-tag="Classic · Dry Noodle" data-desc="Not everything needs a broth. Wok-fried house noodles tossed with chashu pork, cabbage, carrots, scallions, and our proprietary yakisoba sauce — smoky, sweet, savoury all at once. A great option for those craving something different." data-chips="Dry Noodle,Chashu,Cabbage,Carrot,Yakisoba Sauce" data-bg="linear-gradient(135deg,#0d0800,#1f1500,#0a0600)">
+        <div class="menu-img"><div class="menu-img-bg" style="background:linear-gradient(135deg,#0d0800,#1f1500,#0a0600);"></div><div class="menu-emoji">🥢</div><div class="menu-badge badge-sig">Dry Noodle</div><div class="heat-meter"><div class="heat-pip on"></div><div class="heat-pip"></div><div class="heat-pip"></div><div class="heat-pip"></div></div></div>
+        <div class="menu-body"><div class="menu-name">Yakisoba</div><div class="menu-jp">焼きそば</div><p class="menu-desc">Wok-fried house noodles, chashu, cabbage, carrot, smoky-sweet yakisoba sauce.</p><div class="menu-footer"><div><div class="menu-price">$14</div><div class="menu-size">Regular only</div></div><button class="btn-add open-modal">+ Details</button></div></div>
+      </div>
+    </div>
+    <div class="menu-more reveal">
+      <a href="https://kenzoramen.ca" target="_blank" rel="noopener" class="btn-primary" style="display:inline-flex;">View Full Menu →</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider-ornament" style="padding:3.5rem 0;"><div class="div-line"></div><div class="div-glyph">場</div><div class="div-line"></div></div>
+
+<!-- LOCATION -->
+<section class="location-section" id="location">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Find Us</div>
+      <h2 class="section-title">Come Find<br><span class="em">Your Bowl</span></h2>
+    </div>
+    <div class="location-grid">
+      <div class="map-wrap reveal">
+        <div class="map-frame">
+          <div class="map-grid-bg"></div>
+          <div class="map-dot-grid"></div>
+          <div class="pulse-rings"><div class="pulse-ring"></div><div class="pulse-ring"></div><div class="pulse-ring"></div></div>
+          <div class="map-pin-wrap">
+            <span class="map-pin-icon">📍</span>
+            <div class="map-pin-ring-shadow"></div>
+            <div class="map-label">Kenzo Ramen</div>
+            <div class="map-sub">555 Essa Rd, Barrie</div>
+          </div>
+        </div>
+        <div class="map-overlay-link"><a href="https://maps.google.com/?q=A9+555+Essa+Road+Barrie+ON" target="_blank" rel="noopener">Open in Google Maps ↗</a></div>
+      </div>
+      <div class="info-panel reveal reveal-delay-1">
+        <div class="info-row"><div class="info-icon-wrap">📍</div><div><div class="info-label">Address</div><div class="info-val">A9 – 555 Essa Road<br>Barrie, ON &nbsp;L4N 9P4</div></div></div>
+        <div class="info-row"><div class="info-icon-wrap">📞</div><div><div class="info-label">Phone</div><div class="info-val"><a href="tel:7057288050">(705) 728-8050</a></div></div></div>
+        <div class="info-row"><div class="info-icon-wrap">🌐</div><div><div class="info-label">Website</div><div class="info-val"><a href="https://kenzoramen.ca" target="_blank" rel="noopener">kenzoramen.ca</a></div></div></div>
+        <div class="info-row"><div class="info-icon-wrap">🕐</div>
+          <div style="width:100%"><div class="info-label">Hours</div>
+            <div class="hours-grid">
+              <div class="hours-row"><span class="hours-day">Mon – Sat</span><span class="hours-time">11:30 AM – 9:00 PM <span class="today-badge" id="today-tag"></span></span></div>
+              <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-closed">Closed</span></div>
+            </div>
+          </div>
+        </div>
+        <a href="https://maps.google.com/?q=A9+555+Essa+Road+Barrie+ON" target="_blank" rel="noopener" class="btn-directions">📍 Get Directions on Google Maps</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div><div class="footer-logo">KENZO <span class="em">拉麺</span></div><p class="footer-tagline">Barrie's home for authentic Japanese ramen. House-made noodles, rich broths, real flavour.</p></div>
+      <div class="footer-col"><div class="footer-col-title">Navigate</div><ul><li><a href="#home">Home</a></li><li><a href="#menu">Menu</a></li><li><a href="#reviews">Reviews</a></li><li><a href="#location">Location</a></li></ul></div>
+      <div class="footer-col"><div class="footer-col-title">Visit Us</div><ul><li><a href="tel:7057288050">(705) 728-8050</a></li><li><a href="https://kenzoramen.ca" target="_blank" rel="noopener">kenzoramen.ca</a></li><li><a href="https://maps.google.com/?q=A9+555+Essa+Road+Barrie+ON" target="_blank" rel="noopener">Get Directions</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 Kenzo Ramen · A9-555 Essa Rd, Barrie ON · All Rights Reserved</p>
+      <div class="footer-socials"><a href="#" class="social-btn" aria-label="Instagram">📸</a><a href="https://kenzoramen.ca" target="_blank" rel="noopener" class="social-btn" aria-label="Website">🌐</a><a href="tel:7057288050" class="social-btn" aria-label="Phone">📞</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+    <div class="modal-img" id="modal-img"></div>
+    <div class="modal-body">
+      <div class="modal-tag" id="modal-tag"></div>
+      <div class="modal-name" id="modal-title"></div>
+      <div class="modal-jp" id="modal-jp"></div>
+      <p class="modal-desc" id="modal-desc"></p>
+      <div class="modal-tags" id="modal-chips"></div>
+      <div class="modal-footer">
+        <div class="modal-price" id="modal-price"></div>
+        <a href="tel:7057288050" class="btn-order-modal">🔥 Call to Order</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WELCOME POPUP -->
+<div class="welcome-popup" id="welcome-popup" role="status">
+  <div class="popup-icon">🍜</div>
+  <div><div class="popup-title">Open Today · 11:30 AM – 9 PM</div><div class="popup-sub">Mon–Sat · A9-555 Essa Rd, Barrie · (705) 728-8050</div></div>
+  <button class="popup-close" id="popup-close" aria-label="Dismiss">✕</button>
+</div>
+
+<script>
+// LOADER
+window.addEventListener('load',()=>setTimeout(()=>document.getElementById('loader').classList.add('hidden'),2000));
+
+// CURSOR
+(()=>{
+  const dot=document.getElementById('cur-dot'),ring=document.getElementById('cur-ring');
+  if(!dot||!ring)return;
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function tick(){rx+=(mx-rx)*.18;ry+=(my-ry)*.18;dot.style.left=mx+'px';dot.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(tick);})();
+  document.querySelectorAll('a,button,.menu-card').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{dot.style.width='16px';dot.style.height='16px';ring.style.width='56px';ring.style.height='56px';ring.style.borderColor='rgba(255,69,0,.7)';});
+    el.addEventListener('mouseleave',()=>{dot.style.width='8px';dot.style.height='8px';ring.style.width='36px';ring.style.height='36px';ring.style.borderColor='rgba(255,69,0,.45)';});
+  });
+})();
+
+// NAV SCROLL
+const nav=document.getElementById('main-nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>60));
+
+// HAMBURGER
+const burger=document.getElementById('hamburger'),mMenu=document.getElementById('mobile-menu');
+burger.addEventListener('click',()=>{
+  const o=mMenu.classList.toggle('open');
+  burger.classList.toggle('open',o);
+  burger.setAttribute('aria-expanded',o);
+  mMenu.setAttribute('aria-hidden',!o);
+  document.body.style.overflow=o?'hidden':'';
+});
+document.querySelectorAll('.mob-link,.mob-order').forEach(a=>a.addEventListener('click',()=>{
+  mMenu.classList.remove('open');burger.classList.remove('open');
+  burger.setAttribute('aria-expanded','false');mMenu.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+}));
+
+// REVEAL
+const ro=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal,.reveal-scale').forEach(el=>ro.observe(el));
+
+// STEAM CANVAS
+(()=>{
+  const c=document.getElementById('steam-canvas');if(!c)return;
+  const ctx=c.getContext('2d');
+  const resize=()=>{c.width=c.offsetWidth;c.height=c.offsetHeight;};resize();
+  window.addEventListener('resize',resize);
+  class P{
+    constructor(){this.reset();}
+    reset(){this.x=Math.random()*c.width;this.y=c.height*(.7+Math.random()*.3);this.vx=(Math.random()-.5)*.4;this.vy=-(Math.random()*1.2+.5);this.alpha=Math.random()*.22+.04;this.size=Math.random()*28+12;this.life=0;this.max=Math.random()*120+80;}
+    update(){this.x+=this.vx;this.y+=this.vy;this.vx+=(Math.random()-.5)*.04;this.life++;this.alpha*=.988;if(this.life>this.max||this.alpha<.004)this.reset();}
+    draw(){ctx.save();ctx.globalAlpha=this.alpha;const g=ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.size);g.addColorStop(0,'rgba(255,130,60,.7)');g.addColorStop(.5,'rgba(255,70,20,.2)');g.addColorStop(1,'rgba(255,50,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();ctx.restore();}
+  }
+  const ps=Array.from({length:35},()=>{const p=new P();p.life=Math.random()*p.max;return p;});
+  (function loop(){ctx.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.update();p.draw();});requestAnimationFrame(loop);})();
+})();
+
+// PARTICLES
+(()=>{
+  const cont=document.getElementById('particles');
+  const spawn=()=>{const p=document.createElement('div');p.className='particle';const s=Math.random()*3+1;p.style.cssText=`left:${Math.random()*100}%;width:${s}px;height:${s}px;animation-duration:${Math.random()*8+6}s;animation-delay:${Math.random()*3}s;`;cont.appendChild(p);setTimeout(()=>p.remove(),14000);};
+  setInterval(spawn,700);
+})();
+
+// MENU FILTER
+document.querySelectorAll('.filter-btn').forEach(btn=>btn.addEventListener('click',function(){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  this.classList.add('active');
+  const f=this.dataset.filter;
+  document.querySelectorAll('.menu-card').forEach(c=>{
+    const m=f==='all'||c.dataset.category===f;
+    c.style.transition='opacity .35s,transform .35s';
+    c.style.opacity=m?'1':'0.25';
+    c.style.transform=m?'':'scale(.96)';
+    c.style.pointerEvents=m?'':'none';
+  });
+}));
+
+// MODAL
+const backdrop=document.getElementById('modal-backdrop'),mClose=document.getElementById('modal-close');
+function openModal(card){
+  document.getElementById('modal-tag').textContent=card.dataset.tag||'';
+  document.getElementById('modal-title').textContent=card.dataset.name||'';
+  document.getElementById('modal-jp').textContent=card.dataset.jp||'';
+  document.getElementById('modal-desc').textContent=card.dataset.desc||'';
+  document.getElementById('modal-price').textContent=card.dataset.price||'';
+  const imgEl=document.getElementById('modal-img');
+  imgEl.style.background=card.dataset.bg||'var(--ash)';
+  imgEl.innerHTML=`<span style="font-size:6rem;filter:drop-shadow(0 0 20px rgba(255,69,0,.5));">${card.dataset.emoji||'🍜'}</span>`;
+  const ce=document.getElementById('modal-chips');ce.innerHTML='';
+  (card.dataset.chips||'').split(',').forEach(c=>{if(!c.trim())return;const s=document.createElement('span');s.className='modal-chip';s.textContent=c.trim();ce.appendChild(s);});
+  backdrop.classList.add('open');document.body.style.overflow='hidden';
+}
+function closeModal(){backdrop.classList.remove('open');document.body.style.overflow='';}
+document.querySelectorAll('.open-modal').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();openModal(btn.closest('.menu-card'));}));
+document.querySelectorAll('.menu-card').forEach(c=>c.addEventListener('click',function(e){if(!e.target.closest('.btn-add'))openModal(this);}));
+mClose.addEventListener('click',closeModal);
+backdrop.addEventListener('click',e=>{if(e.target===backdrop)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// WELCOME POPUP
+(()=>{
+  const p=document.getElementById('welcome-popup'),c=document.getElementById('popup-close');
+  setTimeout(()=>p.classList.add('show'),3000);
+  setTimeout(()=>p.classList.add('hide'),8500);
+  c.addEventListener('click',()=>p.classList.add('hide'));
+})();
+
+// TODAY BADGE
+(()=>{const d=new Date().getDay(),b=document.getElementById('today-tag');if(b&&d>=1&&d<=6)b.textContent='Open Today';})();
+
+// SMOOTH SCROLL
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',function(e){
+  const t=document.querySelector(this.getAttribute('href'));if(!t)return;
+  e.preventDefault();window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});
+}));
+</script>
+</body>
+</html>
